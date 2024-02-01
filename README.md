@@ -1,5 +1,5 @@
 
-# Devportfolio
+# FlashChat
 
 **FlashChat** is a Group Chat Application built with Flutter & Firebase.
 
@@ -16,7 +16,7 @@
 ## Features
 
 - Authentication - Email & password
-- Realtiem Chatting
+- Realtime Chatting
 - Fully  Responsive
 - Dynamic Flutter Animations
 
