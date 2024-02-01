@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         await _auth.signInWithEmailAndPassword(
                             email: email!, password: password!);
 
-                        Navigator.pushNamed(context, '/chat');
+                        Navigator.popAndPushNamed(context, '/chat');
                         _controller.clear();
                         _controller2.clear();
 

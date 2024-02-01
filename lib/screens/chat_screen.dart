@@ -47,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: null,
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.exit_to_app_rounded),
