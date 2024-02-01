@@ -33,10 +33,6 @@ class _ChatScreenState extends State<ChatScreen> {
   void getCurrentUser() async {
     try {
       final user = _auth.currentUser;
-      final userData = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
       if (user != null) {
         loggedInUser = user;
       }
@@ -80,7 +76,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       controller: messageTextController,
                       onChanged: (value) {
                         messageTextController.text = value;
-                        print(messageTextController.text);
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
@@ -181,9 +176,15 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment:
             isMe! ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Text(
-            username!,
-            style: const TextStyle(fontSize: 12.0, color: Colors.black54),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6.0),
+            child: Text(
+              username!,
+              style: const TextStyle(
+                fontSize: 13.0,
+                color: Colors.black,
+              ),
+            ),
           ),
           Material(
               borderRadius: isMe!
@@ -206,7 +207,7 @@ class MessageBubble extends StatelessWidget {
                   '$text',
                   style: TextStyle(
                       color: isMe! ? Colors.white : Colors.black,
-                      fontSize: 15.0),
+                      fontSize: 16.0),
                 ),
               )),
         ],

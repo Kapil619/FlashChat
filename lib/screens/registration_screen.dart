@@ -92,16 +92,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           password: password!,
                         );
                         await _auth.currentUser!.updateDisplayName(username);
-                        FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(_auth.currentUser!.uid)
-                            .set({
-                          'username': username,
-                          'email': email,
-                          'password': password,
-                        });
                         Navigator.pushNamed(context, '/chat');
-                        _auth.currentUser!.updateDisplayName(username);
                         setState(
                           () {
                             _isLoading = false;
