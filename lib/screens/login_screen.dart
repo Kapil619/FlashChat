@@ -11,6 +11,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller2 = TextEditingController();
+
   final _auth = FirebaseAuth.instance;
   bool _isLoading = false;
   String? email;
@@ -39,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 48.0,
             ),
             TextField(
+              controller: _controller,
               keyboardType: TextInputType.emailAddress,
               textAlign: TextAlign.center,
               onChanged: (value) {
@@ -51,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 8.0,
             ),
             TextField(
+              controller: _controller2,
               textAlign: TextAlign.center,
               obscureText: true,
               onChanged: (value) {
@@ -74,19 +79,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       );
                       try {
-                        final user = await _auth.signInWithEmailAndPassword(
+                        await _auth.signInWithEmailAndPassword(
                             email: email!, password: password!);
 
-                        if (user != null) {
-                          Navigator.pushNamed(context, '/chat');
-                        }
+                        Navigator.pushNamed(context, '/chat');
+                        _controller.clear();
+                        _controller2.clear();
+
                         setState(
                           () {
                             _isLoading = false;
                           },
                         );
                       } catch (e) {
-                        print(e);
+                        debugPrint(e.toString());
                       }
                     },
                   )
