@@ -12,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
   String? email;
   String? password;
 
@@ -59,22 +60,34 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 24.0,
             ),
-            RoundedButton(
-              color: Colors.lightBlueAccent,
-              title: 'Log in',
-              onPressed: () async {
-                try {
-                  final user = await _auth.signInWithEmailAndPassword(
-                      email: email!, password: password!);
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : RoundedButton(
+                    color: Colors.lightBlueAccent,
+                    title: 'Log in',
+                    onPressed: () async {
+                      setState(
+                        () {
+                          _isLoading = true;
+                        },
+                      );
+                      try {
+                        final user = await _auth.signInWithEmailAndPassword(
+                            email: email!, password: password!);
 
-                  if (user != null) {
-                    Navigator.pushNamed(context, '/chat');
-                  }
-                } catch (e) {
-                  print(e);
-                }
-              },
-            )
+                        if (user != null) {
+                          Navigator.pushNamed(context, '/chat');
+                        }
+                        setState(
+                          () {
+                            _isLoading = false;
+                          },
+                        );
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  )
           ],
         ),
       ),

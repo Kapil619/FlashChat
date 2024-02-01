@@ -12,6 +12,7 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
   String? email;
   String? password;
   @override
@@ -58,21 +59,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             const SizedBox(
               height: 24.0,
             ),
-            RoundedButton(
-              color: Colors.blueAccent,
-              title: 'Register',
-              onPressed: () async {
-                try {
-                  final newUser = await _auth.createUserWithEmailAndPassword(
-                      email: email!, password: password!);
-                  if (newUser != null) {
-                    Navigator.pushNamed(context, '/chat');
-                  }
-                } catch (e) {
-                  print(e);
-                }
-              },
-            )
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : RoundedButton(
+                    color: Colors.blueAccent,
+                    title: 'Register',
+                    onPressed: () async {
+                      setState(
+                        () {
+                          _isLoading = true;
+                        },
+                      );
+                      try {
+                        final newUser =
+                            await _auth.createUserWithEmailAndPassword(
+                                email: email!, password: password!);
+                        if (newUser != null) {
+                          Navigator.pushNamed(context, '/chat');
+                        }
+                        setState(
+                          () {
+                            _isLoading = false;
+                          },
+                        );
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  )
           ],
         ),
       ),
