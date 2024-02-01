@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashchat/constants.dart';
 import 'package:flashchat/utils/utils.dart';
+import 'package:flashchat/widgets/auth_footer.dart';
 import 'package:flashchat/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
 
@@ -87,6 +88,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       );
                       try {
+                        if (email == null || password == null) {
+                          showSnackbar('Please enter all the fields', context);
+                          setState(
+                            () {
+                              _isLoading = false;
+                            },
+                          );
+                          return;
+                        }
                         await _auth.signInWithEmailAndPassword(
                             email: email!, password: password!);
 
@@ -101,11 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       } on FirebaseAuthException catch (e) {
                         String res = e.toString();
-                        if (res.contains('invalid-email')) {
-                          res = 'Invalid email';
-                        } else if (res.contains('invalid-credential')) {
-                          res = 'Invalid credentials';
-                        }
+                        res = errorCheck(res);
                         showSnackbar(res, context);
                         setState(
                           () {
@@ -114,7 +120,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       }
                     },
-                  )
+                  ),
+            AuthFooter(
+              text: 'Sign-up',
+              onTap: () => Navigator.pushReplacementNamed(context, '/register'),
+            ),
           ],
         ),
       ),

@@ -12,3 +12,18 @@ showSnackbar(String content, BuildContext context) {
     ),
   );
 }
+
+errorCheck(String res) {
+  if (res.contains('invalid-email')) {
+    res = 'Invalid email';
+  } else if (res.contains('invalid-credential')) {
+    res = 'Incorrect Email or Password';
+  } else if (res.contains('email-already-in-use')) {
+    res = 'Email already in use';
+  } else if (res.contains('weak-password')) {
+    res = 'Weak password';
+  } else {
+    res = 'Something went wrong';
+  }
+  return res;
+}

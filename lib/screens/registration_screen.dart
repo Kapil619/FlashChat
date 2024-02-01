@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashchat/constants.dart';
 import 'package:flashchat/utils/utils.dart';
+import 'package:flashchat/widgets/auth_footer.dart';
 import 'package:flashchat/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
 
@@ -85,7 +86,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               height: 24.0,
             ),
             _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
                 : RoundedButton(
                     color: Colors.blueAccent,
                     title: 'Register',
@@ -96,6 +99,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         },
                       );
                       try {
+                        if (email == null ||
+                            password == null ||
+                            username == null) {
+                          showSnackbar('Please enter all the fields', context);
+                          setState(
+                            () {
+                              _isLoading = false;
+                            },
+                          );
+                          return;
+                        }
                         await _auth.createUserWithEmailAndPassword(
                           email: email!,
                           password: password!,
@@ -109,13 +123,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         );
                       } on FirebaseAuthException catch (e) {
                         String res = e.toString();
-                        if (res.contains('email-already-in-use')) {
-                          res = 'Email already in use';
-                        } else if (res.contains('invalid-email')) {
-                          res = 'Invalid email';
-                        } else if (res.contains('weak-password')) {
-                          res = 'Weak password';
-                        }
+                        res = errorCheck(res);
                         showSnackbar(res, context);
                         setState(
                           () {
@@ -124,7 +132,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         );
                       }
                     },
-                  )
+                  ),
+            AuthFooter(
+              text: 'Sign-in',
+              onTap: () => Navigator.pushReplacementNamed(context, '/login'),
+            ),
           ],
         ),
       ),
