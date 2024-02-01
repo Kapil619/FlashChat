@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashchat/constants.dart';
+import 'package:flashchat/utils/utils.dart';
 import 'package:flashchat/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
 
@@ -98,8 +99,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             _isLoading = false;
                           },
                         );
-                      } catch (e) {
-                        debugPrint(e.toString());
+                      } on FirebaseAuthException catch (e) {
+                        String res = e.toString();
+                        if (res.contains('invalid-email')) {
+                          res = 'Invalid email';
+                        } else if (res.contains('invalid-credential')) {
+                          res = 'Invalid credentials';
+                        }
+                        showSnackbar(res, context);
+                        setState(
+                          () {
+                            _isLoading = false;
+                          },
+                        );
                       }
                     },
                   )

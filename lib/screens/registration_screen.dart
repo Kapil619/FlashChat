@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashchat/constants.dart';
+import 'package:flashchat/utils/utils.dart';
 import 'package:flashchat/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
 
@@ -106,9 +107,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             _isLoading = false;
                           },
                         );
-                      } catch (e) {
-                        debugPrint(
-                          e.toString(),
+                      } on FirebaseAuthException catch (e) {
+                        String res = e.toString();
+                        if (res.contains('email-already-in-use')) {
+                          res = 'Email already in use';
+                        } else if (res.contains('invalid-email')) {
+                          res = 'Invalid email';
+                        } else if (res.contains('weak-password')) {
+                          res = 'Weak password';
+                        }
+                        showSnackbar(res, context);
+                        setState(
+                          () {
+                            _isLoading = false;
+                          },
                         );
                       }
                     },
