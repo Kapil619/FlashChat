@@ -24,6 +24,12 @@ class _ChatScreenState extends State<ChatScreen> {
     getCurrentUser();
   }
 
+  @override
+  void dispose() {
+    messageTextController.dispose();
+    super.dispose();
+  }
+
   void getCurrentUser() async {
     try {
       final user = _auth.currentUser;
@@ -69,26 +75,35 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       controller: messageTextController,
                       onChanged: (value) {
-                        messageText = value;
+                        messageTextController.text = value;
+                        print(messageTextController.text);
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
                     onPressed: () {
-                      messageTextController.clear();
-                      _firestore.collection('messages').add(
-                        {
-                          'text': messageText,
-                          'sender': loggedInUser!.email,
-                          'createdAt': Timestamp.now(),
-                        },
-                      );
+                      if (messageTextController.text.trim().isEmpty) {
+                        return;
+                      } else {
+                        _firestore.collection('messages').add(
+                          {
+                            'text': messageTextController.text,
+                            'sender': loggedInUser!.email,
+                            'createdAt': Timestamp.now(),
+                          },
+                        );
+                        messageTextController.clear();
+                      }
                     },
-                    child: const Text(
-                      'Send',
-                      style: kSendButtonTextStyle,
+                    child: const Icon(
+                      Icons.send,
+                      color: Colors.lightBlueAccent,
                     ),
+                    // const Text(
+                    //   'Send',
+                    //   style: kSendButtonTextStyle,
+                    // ),
                   ),
                 ],
               ),
