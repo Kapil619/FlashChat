@@ -33,6 +33,10 @@ class _ChatScreenState extends State<ChatScreen> {
   void getCurrentUser() async {
     try {
       final user = _auth.currentUser;
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
       if (user != null) {
         loggedInUser = user;
       }
@@ -91,6 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             'text': messageTextController.text,
                             'sender': loggedInUser!.email,
                             'createdAt': Timestamp.now(),
+                            'username': loggedInUser!.displayName,
                           },
                         );
                         messageTextController.clear();
@@ -131,10 +136,12 @@ class MessagesStream extends StatelessWidget {
           for (var message in messages) {
             final messageText = message.get('text');
             final messageSender = message.get('sender');
+            final messageUsername = message.get('username');
             final currentUser = loggedInUser?.email;
 
             final messageBubble = MessageBubble(
               sender: messageSender,
+              username: messageUsername,
               text: messageText,
               isMe: currentUser == messageSender,
             );
@@ -161,8 +168,10 @@ class MessagesStream extends StatelessWidget {
 class MessageBubble extends StatelessWidget {
   final String? text;
   final String? sender;
+  final String? username;
   final bool? isMe;
-  const MessageBubble({this.text, this.sender, this.isMe, super.key});
+  const MessageBubble(
+      {this.text, this.sender, this.isMe, this.username, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +182,7 @@ class MessageBubble extends StatelessWidget {
             isMe! ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
-            sender!,
+            username!,
             style: const TextStyle(fontSize: 12.0, color: Colors.black54),
           ),
           Material(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flashchat/constants.dart';
 import 'package:flashchat/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
   bool _isLoading = false;
   String? email;
+  String? username;
   String? password;
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               height: 8.0,
             ),
             TextField(
+              keyboardType: TextInputType.emailAddress,
+              textAlign: TextAlign.center,
+              onChanged: (value) {
+                username = value;
+              },
+              decoration:
+                  ktextFieldDecoration.copyWith(hintText: 'Enter a username'),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            TextField(
               textAlign: TextAlign.center,
               obscureText: true,
               onChanged: (value) {
@@ -74,8 +88,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       );
                       try {
                         await _auth.createUserWithEmailAndPassword(
-                            email: email!, password: password!);
+                          email: email!,
+                          password: password!,
+                        );
+                        await _auth.currentUser!.updateDisplayName(username);
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(_auth.currentUser!.uid)
+                            .set({
+                          'username': username,
+                          'email': email,
+                          'password': password,
+                        });
                         Navigator.pushNamed(context, '/chat');
+                        _auth.currentUser!.updateDisplayName(username);
                         setState(
                           () {
                             _isLoading = false;
