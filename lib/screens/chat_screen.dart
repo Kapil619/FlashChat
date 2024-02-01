@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _firestrore = FirebaseFirestore.instance;
+User? loggedInUser;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -15,7 +16,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final messageTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
-  User? loggedInUser;
   String? messageText;
 
   @override
@@ -73,7 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            MessagesStream(),
+            const MessagesStream(),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -126,9 +126,12 @@ class MessagesStream extends StatelessWidget {
           for (var message in messages) {
             final messageText = message.get('text');
             final messageSender = message.get('sender');
+            final currentUser = loggedInUser?.email;
+
             final messageBubble = MessageBubble(
               sender: messageSender,
               text: messageText,
+              isMe: currentUser == messageSender,
             );
 
             messageBubbles.add(messageBubble);
@@ -152,29 +155,43 @@ class MessagesStream extends StatelessWidget {
 class MessageBubble extends StatelessWidget {
   final String? text;
   final String? sender;
-  const MessageBubble({this.text, this.sender, super.key});
+  final bool? isMe;
+  const MessageBubble({this.text, this.sender, this.isMe, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            isMe! ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
             sender!,
             style: const TextStyle(fontSize: 12.0, color: Colors.black54),
           ),
           Material(
-              borderRadius: BorderRadius.circular(30.0),
+              borderRadius: isMe!
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      bottomLeft: Radius.circular(30.0),
+                      bottomRight: Radius.circular(30.0),
+                    )
+                  : const BorderRadius.only(
+                      bottomLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0),
+                      bottomRight: Radius.circular(30.0),
+                    ),
               elevation: 5.0,
-              color: Colors.lightBlueAccent,
+              color: isMe! ? Colors.lightBlueAccent : Colors.white,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 child: Text(
                   '$text',
-                  style: const TextStyle(fontSize: 15.0),
+                  style: TextStyle(
+                      color: isMe! ? Colors.white : Colors.black,
+                      fontSize: 15.0),
                 ),
               )),
         ],
