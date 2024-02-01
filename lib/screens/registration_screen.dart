@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashchat/constants.dart';
 import 'package:flashchat/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -17,6 +16,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? email;
   String? username;
   String? password;
+
+  @override
+  void dispose() {
+    email = null;
+    username = null;
+    password = null;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +100,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           password: password!,
                         );
                         await _auth.currentUser!.updateDisplayName(username);
-                        Navigator.pushNamed(context, '/chat');
+                        Navigator.popAndPushNamed(context, '/chat');
                         setState(
                           () {
                             _isLoading = false;

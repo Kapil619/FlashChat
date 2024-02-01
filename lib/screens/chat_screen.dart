@@ -53,7 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: const Icon(Icons.exit_to_app_rounded),
             onPressed: () {
               _auth.signOut();
-              Navigator.pushNamed(context, '/login');
+              Navigator.popAndPushNamed(context, '/login');
             },
           ),
         ],
