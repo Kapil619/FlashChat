@@ -1,5 +1,5 @@
-
-# FlashChat
+# FlashChat   
+<sub> <a href="https://github.com/Kapil619/FlashChat/releases/download/v1.0.0/flashchat.apk">Download</a></sub>
 
 **FlashChat** is a Group Chat Application built with Flutter & Firebase.
 
