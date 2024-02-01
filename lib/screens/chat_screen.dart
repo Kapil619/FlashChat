@@ -3,7 +3,7 @@ import 'package:flashchat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final _firestrore = FirebaseFirestore.instance;
+final _firestore = FirebaseFirestore.instance;
 User? loggedInUser;
 
 class ChatScreen extends StatefulWidget {
@@ -26,12 +26,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void getCurrentUser() async {
     try {
-      final user = await _auth.currentUser;
+      final user = _auth.currentUser;
       if (user != null) {
         loggedInUser = user;
       }
     } catch (e) {
-      print(e);
+      debugPrint(
+        e.toString(),
+      );
     }
   }
 
@@ -75,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   TextButton(
                     onPressed: () {
                       messageTextController.clear();
-                      _firestrore.collection('messages').add(
+                      _firestore.collection('messages').add(
                         {
                           'text': messageText,
                           'sender': loggedInUser!.email,
@@ -103,7 +105,7 @@ class MessagesStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestrore
+      stream: _firestore
           .collection('messages')
           .orderBy('createdAt', descending: true)
           .snapshots(),

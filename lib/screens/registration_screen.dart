@@ -85,7 +85,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           },
                         );
                       } catch (e) {
-                        print(e);
+                        debugPrint(
+                          e.toString(),
+                        );
                       }
                     },
                   )
